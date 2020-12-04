@@ -1,0 +1,48 @@
+name: AutoDailyCP
+
+on:
+  push:
+    branches: 
+      - master
+  watch:
+    types: started
+  schedule:
+    - cron: 0 14 * * *
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Install python3
+        run: |
+          sudo -E apt-get -yqq update
+          sudo -E apt-get -yqq install python3
+      # - name: Download DailyCP
+      #  run: |
+      #    git clone https://gitee.com/Finch1/FuckDailyCP
+      #    mv ./FuckDailyCP/* ./
+      - name: Install extensions
+        run: |
+          pip3 install setuptools
+          pip3 install -r requirements.txt
+      - name: DIY formdb
+        run: |
+          cat>formdb/36.json<<EOF
+          [{"wid":"10367","formWid":"970","fieldType":1,"title":"今天你的所在地是？","description":"国内请选择省/市/区（县）；海外请选择海外/州/国家","minLength":1,"sort":"1","maxLength":300,"isRequired":1,"imageCount":-2,"hasOtherItems":0,"colName":"field001","value":"山东省/青岛市/崂山区","minValue":0.0,"maxValue":0.0,"isDecimal":true,"fieldItems":[]},{"wid":"10368","formWid":"970","fieldType":2,"title":"今天你的体温是多少？","description":"","minLength":0,"sort":"2","maxLength":null,"isRequired":1,"imageCount":null,"hasOtherItems":0,"colName":"field002","value":"","minValue":0.0,"maxValue":0.0,"isDecimal":true,"fieldItems":[{"itemWid":"24741","content":"37.2℃及以下","isOtherItems":0,"contendExtend":null,"isSelected":1},{"itemWid":"24742","content":"37.3-37.9℃","isOtherItems":0,"contendExtend":null,"isSelected":null},{"itemWid":"24743","content":"38.0℃及以上","isOtherItems":0,"contendExtend":null,"isSelected":null}]},{"wid":"10369","formWid":"970","fieldType":2,"title":"今天你的身体状况是？","description":"","minLength":0,"sort":"3","maxLength":null,"isRequired":1,"imageCount":null,"hasOtherItems":1,"colName":"field003","value":"","minValue":0.0,"maxValue":0.0,"isDecimal":true,"fieldItems":[{"itemWid":"24744","content":"健康","isOtherItems":0,"contendExtend":null,"isSelected":1},{"itemWid":"24745","content":"发烧","isOtherItems":0,"contendExtend":null,"isSelected":null},{"itemWid":"24746","content":"干咳","isOtherItems":0,"contendExtend":null,"isSelected":null},{"itemWid":"24747","content":"乏力","isOtherItems":0,"contendExtend":null,"isSelected":null},{"itemWid":"24748","content":"其他","isOtherItems":1,"contendExtend":null,"isSelected":null}]},{"wid":"10370","formWid":"970","fieldType":2,"title":"近14天你或你的共同居住人是否有疫情中、高风险区域人员接触史？","description":"","minLength":0,"sort":"4","maxLength":null,"isRequired":1,"imageCount":null,"hasOtherItems":0,"colName":"field004","value":"","minValue":0.0,"maxValue":0.0,"isDecimal":true,"fieldItems":[{"itemWid":"24749","content":"是","isOtherItems":0,"contendExtend":null,"isSelected":null},{"itemWid":"24750","content":"否","isOtherItems":0,"contendExtend":null,"isSelected":1}]},{"wid":"10371","formWid":"970","fieldType":2,"title":"近14天你或你的共同居住人是否和确诊、疑似病人接触过？","description":"","minLength":0,"sort":"5","maxLength":null,"isRequired":1,"imageCount":null,"hasOtherItems":0,"colName":"field005","value":"","minValue":0.0,"maxValue":0.0,"isDecimal":true,"fieldItems":[{"itemWid":"24751","content":"是","isOtherItems":0,"contendExtend":null,"isSelected":null},{"itemWid":"24752","content":"否","isOtherItems":0,"contendExtend":null,"isSelected":1}]},{"wid":"10372","formWid":"970","fieldType":2,"title":"近14天你或你的共同居住人是否是确诊、疑似病例？","description":"","minLength":0,"sort":"6","maxLength":null,"isRequired":1,"imageCount":null,"hasOtherItems":0,"colName":"field006","value":"","minValue":0.0,"maxValue":0.0,"isDecimal":true,"fieldItems":[{"itemWid":"24753","content":"是","isOtherItems":0,"contendExtend":null,"isSelected":null},{"itemWid":"24754","content":"否","isOtherItems":0,"contendExtend":null,"isSelected":1}]},{"wid":"10373","formWid":"970","fieldType":2,"title":"你或你的共同居住人目前是否被医学隔离？","description":"这里指的隔离是指：由社区、街道或当地政府、医院认定要求的。","minLength":0,"sort":"7","maxLength":null,"isRequired":1,"imageCount":null,"hasOtherItems":0,"colName":"field007","value":"","minValue":0.0,"maxValue":0.0,"isDecimal":true,"fieldItems":[{"itemWid":"24755","content":"是","isOtherItems":0,"contendExtend":null,"isSelected":null},{"itemWid":"24756","content":"否","isOtherItems":0,"contendExtend":null,"isSelected":1}]},{"wid":"10374","formWid":"970","fieldType":2,"title":"今天你当地的健康码颜色是？","description":"","minLength":0,"sort":"8","maxLength":null,"isRequired":1,"imageCount":null,"hasOtherItems":0,"colName":"field008","value":"","minValue":0.0,"maxValue":0.0,"isDecimal":true,"fieldItems":[{"itemWid":"24757","content":"绿色","isOtherItems":0,"contendExtend":null,"isSelected":1},{"itemWid":"24758","content":"黄色","isOtherItems":0,"contendExtend":null,"isSelected":null},{"itemWid":"24759","content":"红色","isOtherItems":0,"contendExtend":null,"isSelected":null}]},{"wid":"10375","formWid":"970","fieldType":2,"title":"本人是否承诺以上所填报的全部内容均属实、准确，不存在任何隐瞒与不实的情况，更无遗漏之处","description":"","minLength":0,"sort":"9","maxLength":null,"isRequired":1,"imageCount":null,"hasOtherItems":0,"colName":"field009","value":"","minValue":0.0,"maxValue":0.0,"isDecimal":true,"fieldItems":[{"itemWid":"24760","content":"是","isOtherItems":0,"contendExtend":null,"isSelected":1},{"itemWid":"24761","content":"否","isOtherItems":0,"contendExtend":null,"isSelected":null}]}]
+          EOF
+      - name: Run program
+        env:
+          SCHOOL_NAME: ${{ secrets.SCHOOL_NAME }}
+          ACCOUNT: ${{ secrets.ACCOUNT }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          ADDRESS: ${{ secrets.ADDRESS }}
+        run: |
+          python3 DailyCP.py ${SCHOOL_NAME} ${ACCOUNT} ${PASSWORD} ${ADDRESS}
+      - name : Upload formdb
+        uses: actions/upload-artifact@master
+        with:
+          name: formdb
+          path: formdb
