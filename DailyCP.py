@@ -292,7 +292,7 @@ class DailyCP:
             res = "签到成功"
         elif self.reData == '该收集已填写无需再次填写':
             res = "重复签到"
-        else :
+        else:
             res = "签到失败"
         url = 'https://sc.ftqq.com/' + serverJ + '.send?text=今日校园：' + res + '&desp=' + self.reData
         r = requests.post(url)
@@ -300,16 +300,17 @@ class DailyCP:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 6 or sys.argv != 7:
-        print("python3 DailyCp.py 学校全名 学号 密码 定位地址 formdb文件夹绝对路径")
+    app = ''
+    if len(sys.argv) == 6 or sys.argv == 7:
+        app = DailyCP(sys.argv[1])
+        if not app.login(sys.argv[2], sys.argv[3]):
+            exit()
+        app.autoComplete(sys.argv[4], sys.argv[5])
+    else:
+        print("python3 DailyCp.py 学校全名 学号 密码 定位地址 formdb文件夹绝对路径 serverJ(可选)")
         exit()
-    app = DailyCP(sys.argv[1])
-    if not app.login(sys.argv[2], sys.argv[3]):
-        exit()
-    app.autoComplete(sys.argv[4], sys.argv[5])
-    if len(sys.argv == 7):
+    if len(sys.argv) == 7:
         app.serverJ(sys.argv[6])
-
 
 # Author:HuangXu,FengXinYang,ZhouYuYang.
 # By:AUST HACKER
@@ -322,4 +323,4 @@ if __name__ == "__main__":
 # 2020/7/5 浪费别人的时间是一种可耻的行为。
 
 # tooyi
-# 2020/12/9 增加微信通知
+# 2020/12/9 增加微信通知（可选）
