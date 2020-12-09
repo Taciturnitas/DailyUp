@@ -36,11 +36,11 @@ jobs:
           ACCOUNT: ${{ secrets.ACCOUNT }}
           PASSWORD: ${{ secrets.PASSWORD }}
           ADDRESS: ${{ secrets.ADDRESS }}
-          SERVERJ: ${{ secrets.PUSH_KEY }}
+          PUSH_KEY: ${{ secrets.PUSH_KEY }}
         run: |
-          python3 DailyCP.py ${SCHOOL_NAME} ${ACCOUNT} ${PASSWORD} ${ADDRESS} formdb ${SERVERJ}
-#      - name: Upload formdb
-#        uses: actions/upload-artifact@master
-#        with:
-#          name: formdb
-#          path: formdb
+          python3 DailyCP.py ${SCHOOL_NAME} ${ACCOUNT} ${PASSWORD} ${ADDRESS} formdb ${PUSH_KEY}
+      - name: Upload formdb
+        uses: actions/upload-artifact@master
+        with:
+          name: formdb
+          path: formdb
