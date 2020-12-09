@@ -300,7 +300,7 @@ class DailyCP:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 6 or sys.argv != 7:
         print("python3 DailyCp.py 学校全名 学号 密码 定位地址 formdb文件夹绝对路径")
         exit()
     app = DailyCP(sys.argv[1])
