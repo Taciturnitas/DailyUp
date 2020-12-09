@@ -15,6 +15,7 @@ from Crypto.Cipher import AES
 
 class DailyCP:
     def __init__(self, schoolName="青岛科技大学"):
+        self.reData = ''
         self.key = "ST83=@XV"  # dynamic when app update
         self.session = requests.session()
         self.host = ""
@@ -63,8 +64,9 @@ class DailyCP:
                                 len(key)) * chr(len(key) - len(s) % len(key))
 
         def unpad(s): return s[:-ord(s[len(s) - 1:])]
+
         text = pad(
-            "TdEEGazAXQMBzEAisrYaxRRax5kmnMJnpbKxcE6jxQfWRwP2J78adKYm8WzSkfXJ"+text).encode("utf-8")
+            "TdEEGazAXQMBzEAisrYaxRRax5kmnMJnpbKxcE6jxQfWRwP2J78adKYm8WzSkfXJ" + text).encode("utf-8")
         aes = AES.new(str.encode(key), AES.MODE_CBC,
                       str.encode("ya8C45aRrBEn8sZH"))
         return base64.b64encode(aes.encrypt(text))
@@ -118,7 +120,7 @@ class DailyCP:
 
         ret = self.session.get(
             "https://{host}/iap/login?service=https://{host}/portal/login".format(host=self.host)).url
-        client = ret[ret.find("=")+1:]
+        client = ret[ret.find("=") + 1:]
         ret = self.request("https://{host}/iap/security/lt",
                            "lt={client}".format(client=client), True, False)
         client = ret["result"]["_lt"]
@@ -141,8 +143,9 @@ class DailyCP:
             return False
 
     def checkNeedCaptchaAuthServer(self, username):
-        ret = self.request("http://{host}/authserver/needCaptcha.html?username={username}&pwdEncrypt2=pwdEncryptSalt".format(
-            username=username), parseJson=False).text
+        ret = self.request(
+            "http://{host}/authserver/needCaptcha.html?username={username}&pwdEncrypt2=pwdEncryptSalt".format(
+                username=username), parseJson=False).text
         return ret == "true"
 
     def loginAuthserver(self, username, password, captcha=""):
@@ -204,7 +207,8 @@ class DailyCP:
             "formWid": formWid,
             "collectorWid": collectorWid
         }
-        return self.request("https://{host}/wec-counselor-collector-apps/stu/collector/getFormFields", body)["datas"]["rows"]
+        return self.request("https://{host}/wec-counselor-collector-apps/stu/collector/getFormFields", body)["datas"][
+            "rows"]
 
     def submitCollectorForm(self, formWid, collectWid, schoolTaskWid, rows, address):
         body = {
@@ -217,6 +221,7 @@ class DailyCP:
         ret = self.request(
             "https://{host}/wec-counselor-collector-apps/stu/collector/submitForm", body)
         print(ret["message"])
+        self.reData = ret["message"]
         return ret["message"] == "SUCCESS"
 
     def autoFill(self, rows):
@@ -259,7 +264,7 @@ class DailyCP:
                     form = json.loads(file.read().decode("utf-8"))
                     for item in newForm:
                         l = find(form, [['title', item['title']], [
-                                 'description', item['description']]])
+                            'description', item['description']]])
                         item['value'] = l['value']
                         for fieldItemsList in item['fieldItems']:
                             field = find(l['fieldItems'], [
@@ -269,7 +274,7 @@ class DailyCP:
                     self.autoFill(form)
 
                 self.submitCollectorForm(detail["collector"]["formWid"], detail["collector"]
-                                         ["wid"], detail["collector"]["schoolTaskWid"], form, address)
+                ["wid"], detail["collector"]["schoolTaskWid"], form, address)
             else:
                 with open(formpath, "wb") as file:
                     file.write(json.dumps(
@@ -282,6 +287,17 @@ class DailyCP:
         for item in confirmList:
             self.confirmNotice(item["noticeWid"])
 
+    def serverJ(self, serverJ):
+        if self.reData == 'SUCCESS':
+            res = "签到成功"
+        elif self.reData == '该收集已填写无需再次填写':
+            res = "重复签到"
+        else :
+            res = "签到失败"
+        url = 'https://sc.ftqq.com/' + serverJ + '.send?text=今日校园：' + res + '&desp=' + self.reData
+        r = requests.post(url)
+        print(r.json)
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 6:
@@ -291,6 +307,8 @@ if __name__ == "__main__":
     if not app.login(sys.argv[2], sys.argv[3]):
         exit()
     app.autoComplete(sys.argv[4], sys.argv[5])
+    if len(sys.argv == 7):
+        app.serverJ(sys.argv[6])
 
 
 # Author:HuangXu,FengXinYang,ZhouYuYang.
@@ -302,3 +320,6 @@ if __name__ == "__main__":
 # 2020/6/2 AuthServer的登录网址不再使用硬编码的方式，理论上能支持所有学校了吧？感谢涅灵的反馈。
 # 2020/6/17 修复crontab使用中相对路径的问题。识别form特征。
 # 2020/7/5 浪费别人的时间是一种可耻的行为。
+
+# tooyi
+# 2020/12/9 增加微信通知
