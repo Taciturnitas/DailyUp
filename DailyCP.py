@@ -301,7 +301,7 @@ class DailyCP:
 
 if __name__ == "__main__":
     app = ''
-    if len(sys.argv) == 6 or sys.argv == 7:
+    if len(sys.argv) == 6 or len(sys.argv) == 7:
         app = DailyCP(sys.argv[1])
         if not app.login(sys.argv[2], sys.argv[3]):
             exit()
