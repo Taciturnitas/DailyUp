@@ -291,7 +291,7 @@ class DailyCP:
         if self.reData == 'SUCCESS':
             res = "签到成功"
         elif self.reData == '该收集已填写无需再次填写':
-            res = "重复签到"
+            res = "今天已经签过到啦啦"
         else:
             res = "签到失败"
         url = 'https://sc.ftqq.com/' + serverJ + '.send?text=今日校园：' + res + '&desp=' + self.reData
